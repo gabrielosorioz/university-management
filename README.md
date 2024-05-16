@@ -1,2 +1,2 @@
 # university-management
-This is a university management system wih Java, JDBC, and JavaFX
+This is a university management system with Java, JDBC, and JavaFX
