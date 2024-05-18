@@ -1,0 +1,33 @@
+.login-container {
+    -fx-background-color: linear-gradient(to bottom right, #010280, #061993);
+}
+
+.login-title {
+    -fx-border-color: linear-gradient(to bottom left, #0082F2,#005BC9);
+    -fx-border-width: 0 0 0 5px;
+    -fx-padding: 0 0 0 4px;
+}
+.login-btn {
+    -fx-background-color: linear-gradient(to bottom left, #0082F2,#005BC9);
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+}
+
+.login-field {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 40px;
+    -fx-border-width: 1px;
+    -fx-border-color: #d1d1d1;
+    -fx-border-radius: 12px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.login-field:focused {
+    -fx-background-color: #000173;
+    -fx-background-radius: 12px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+}
