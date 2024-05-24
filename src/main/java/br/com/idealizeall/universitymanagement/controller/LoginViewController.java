@@ -334,6 +334,11 @@ public class LoginViewController implements Initializable {
         }
     }
 
+    private UserRoles getSelectedRole(){
+        return loginRole.getSelectionModel().getSelectedItem();
+    }
 
+    private boolean fieldsAreNotBlank(TextField... fields) {
+        return !Arrays.stream(fields).allMatch(field -> field.getText().isBlank());
     }
 }
