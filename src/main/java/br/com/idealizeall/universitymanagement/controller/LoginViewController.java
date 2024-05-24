@@ -247,10 +247,25 @@ public class LoginViewController implements Initializable {
                 showErrorUsername(adminUsername);
             case "Username is blank":
 
-            default:
-                break;
+    private void addPasswordValidationUI(UserRoles role,boolean hasCap, boolean hasLow , boolean hasNum, boolean hasLength){
+        List<Label> labels;
+        switch (role) {
+            case ADMIN -> labels = adminPassLabels;
+            case TEACHER -> labels = teacherPassLabels;
+            case STUDENT -> labels = studentPassLabels;
+            default -> throw new IllegalArgumentException("Invalid user role");
+        }
+        if(hasLength && hasCap && hasLow && hasNum){
+            getPassword(role).setStyle("-fx-border-color: #3dcc00;");
+        } else {
+            getPassword(role).setStyle("-fx-border-color: #FFFFFF;");
         }
 
+        /** Update each label's color based on the corresponding validation rule **/
+        labels.get(0).setStyle("-fx-text-fill:" + (hasNum ? "#3dcc00;" : "#FFFFFF"));
+        labels.get(1).setStyle("-fx-text-fill:" + (hasLength ? "#3dcc00;" : "#FFFFFF"));
+        labels.get(2).setStyle("-fx-text-fill:" + (hasCap ? "#3dcc00;" : "#FFFFFF"));
+        labels.get(3).setStyle("-fx-text-fill:" + (hasLow ? "#3dcc00;" : "#FFFFFF"));
     }
 
     boolean fieldIsNotBlank(PasswordField password, TextField username, PasswordField confirmPassword){
