@@ -165,57 +165,15 @@ public class LoginViewController implements Initializable {
         ObservableList dataList = FXCollections.observableArrayList(rolesList);
         loginRole.setPromptText("Choose role: ");
         loginRole.setItems(dataList);
+
     }
 
-    void checkPassword(PasswordField passwordField){
-        passwordField.textProperty().addListener(new ChangeListener<String>() {
-
-            boolean hasNum = false;
-            boolean hasCap = false;
-            boolean hasLow = false;
-            boolean hasLenght = false;
-
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                hasCap = newValue.matches(".*[A-Z].*");
-                hasLow  = newValue.matches(".*[a-z].*");
-                hasNum = newValue.matches(".*\\d.*");
-                hasLenght = newValue.length() > 7;
-
-                if (hasLenght){
-                    admPass8Char.setStyle("-fx-text-fill: #3dcc00;");
-                } else {
-                    admPass8Char.setStyle("-fx-text-fill: #FFFFFF;");
-                }
-                if(hasCap){
-                    System.out.println("Contém maiúscula");
-                    admPassHasCap.setStyle("-fx-text-fill: #3dcc00;");
-
-                } else {
-                    System.out.println("Não contém maiúscula");
-                    admPassHasCap.setStyle("-fx-text-fill: #FFFFFF;");
-                }
-                if(hasNum){
-                    admPassHasNum.setStyle("-fx-text-fill: #3dcc00;");
-                    System.out.println("Contém Número");
-                } else {
-                    admPassHasNum.setStyle("-fx-text-fill: #FFFFFF;");
-                    System.out.println("Não contém número");
-                }
-                if(hasLow){
-                    System.out.println("Contém letra minúscula");
-                    admPassHasLow.setStyle("-fx-text-fill: #3dcc00;");
-                } else {
-                    admPassHasLow.setStyle("-fx-text-fill: #FFFFFF;");
-                    System.out.println("Não contém letra minúscula");
-                }
-                if (hasLow && hasLenght && hasCap && hasNum){
-                    adminPassword.setStyle("-fx-border-color: #3dcc00;");
-                } else {
-                    adminPassword.setStyle("-fx-border-color: #d1d1d1;");
-                }
-            }
-        });
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     //Task , validar se os campos password e confirmPassword são iguais.
