@@ -176,7 +176,7 @@ public class LoginViewController implements Initializable {
         alert.showAndWait();
     }
 
-    //Task , validar se os campos password e confirmPassword são iguais.
+    public void signUp(ActionEvent actionEvent){
 
     void checkUsername(TextField username){
         username.textProperty().addListener(new InvalidationListener() {
@@ -188,10 +188,14 @@ public class LoginViewController implements Initializable {
             }
         });
     }
+        UserRoles selectedRole = getSelectedRole();
+        String username = getUsername(selectedRole).getText();
+        String password = getPassword(selectedRole).getText();
+        String confirmPassword = getConfirmPassword(selectedRole).getText();
 
-    public void saveUser(ActionEvent actionEvent){
-        if(fieldIsNotBlank(adminPassword,adminUsername,adminConfirmPassword)){
 
+        boolean notBlank = fieldsAreNotBlank(getPassword(selectedRole),getUsername(selectedRole),getConfirmPassword(selectedRole));
+        boolean equalPasswords = Objects.equals(password, confirmPassword);
 
         } else {
             userService = new UserService();
@@ -201,14 +205,39 @@ public class LoginViewController implements Initializable {
                     .dataCreate(LocalDateTime.now())
                     .role(UserRoles.ADMIN)
                     .build();
+        userService = new UserService();
+
+        String email = null;
+
+        if(notBlank && equalPasswords){
+            User user = userService.createUserByRole(selectedRole,username,password, null);
             try {
 
                 userService.registerUser(newUser);
+                userService.registerUser(user);
+                showAlert("Congratulations","Successfully register. ", "Now you can log in with your password and user",Alert.AlertType.INFORMATION);
+                showForm(FormType.LOGIN);
+                resetFields(selectedRole);
             } catch (UserException e) {
-                handleUserException(e);
+                handleUserException(e,selectedRole);
             }
             userService = null;
         }
+        else if (!notBlank && equalPasswords){
+            highLightEmptyFields(selectedRole);
+            showAlert("Fields are empty","", "Please fill all fields",Alert.AlertType.ERROR);
+        }
+        else if (username.isBlank()){
+            highLightEmptyFields(selectedRole);
+            showAlert("Invalid Username","Username is blank","Please fill username correctly",Alert.AlertType.ERROR);
+        }
+        else if(!equalPasswords && notBlank) {
+
+            showErrorFieldUI(getPassword(selectedRole));
+
+            showAlert("Password error","", "password are different",Alert.AlertType.ERROR);
+        }
+
     }
 
     public void showErrorUsername(TextField username){
