@@ -15,7 +15,7 @@
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.idealizeall.universitymanagement.controller.LoginViewController">
 
    <children>
-      <AnchorPane fx:id="loginForm" styleClass="login-container" stylesheets="@css/login-view.css">
+      <AnchorPane fx:id="loginForm" styleClass="login-container" stylesheets="@css/login-view.css" visible="false">
          <children>
             <FontAwesomeIconView fill="WHITE" glyphName="ADDRESS_CARD" layoutX="178.0" layoutY="194.0" size="6EM" wrappingWidth="94.0" />
             <Label layoutX="65.0" layoutY="51.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Welcome back!" textFill="WHITE">
@@ -33,7 +33,7 @@
                </font></PasswordField>
             <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="73.0" layoutY="264.0" size="2em" wrappingWidth="22.0" />
             <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="73.0" layoutY="334.0" size="2em" wrappingWidth="22.0" />
-            <Button fx:id="loginBtn" layoutX="60.0" layoutY="370.0" mnemonicParsing="false" onAction="#handleBtnClick" prefHeight="54.0" prefWidth="330.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="Login">
+            <Button fx:id="loginBtn" layoutX="60.0" layoutY="370.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="330.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="Login">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
@@ -45,7 +45,7 @@
             <ComboBox fx:id="loginRole" layoutX="278.0" layoutY="465.0" onAction="#switchForm" prefHeight="29.0" prefWidth="144.0" promptText="Choose role" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="adminForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css">
+      <AnchorPane fx:id="adminForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css" visible="false">
          <children>
             <Label layoutX="56.0" layoutY="48.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Register account!" textFill="WHITE">
                <font>
@@ -58,7 +58,7 @@
                </font>
             </PasswordField>
             <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="64.0" layoutY="465.0" size="2.2em" wrappingWidth="22.0" />
-            <Button fx:id="adminSignUpBtn" layoutX="45.0" layoutY="597.0" mnemonicParsing="false" onAction="#saveUser" prefHeight="65.0" prefWidth="450.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
+            <Button fx:id="adminSignUpBtn" layoutX="45.0" layoutY="597.0" mnemonicParsing="false" onAction="#signUp" prefHeight="65.0" prefWidth="450.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -66,7 +66,7 @@
                   <Font size="18.0" />
                </font>
             </Button>
-            <Hyperlink fx:id="adminSignInBtn" layoutX="318.0" layoutY="671.0" onAction="#loginForm" text="Sign in here">
+            <Hyperlink fx:id="adminSignInBtn" layoutX="318.0" layoutY="671.0" onAction="#signIn" text="Sign in here">
                <font>
                   <Font size="18.0" />
                </font>
@@ -130,110 +130,150 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="studentForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css" visible="false">
+      <AnchorPane fx:id="studentForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css">
          <children>
-            <Label layoutX="65.0" layoutY="51.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Welcome back!" textFill="WHITE">
+            <Label layoutX="56.0" layoutY="48.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Welcome back!" textFill="WHITE">
                <font>
-                  <Font size="28.0" />
+                  <Font size="34.0" />
                </font>
             </Label>
-            <TextField fx:id="studentPassword" layoutX="60.0" layoutY="281.0" prefHeight="45.0" prefWidth="330.0" promptText="Password" styleClass="login-field" stylesheets="@css/login-view.css">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <PasswordField fx:id="studentConfirmPassword" layoutX="60.0" layoutY="347.0" prefHeight="45.0" prefWidth="330.0" promptText="Confirm password" styleClass="login-field" stylesheets="@css/login-view.css">
+            <PasswordField fx:id="studentPassword" layoutX="45.0" layoutY="351.0" prefHeight="50.0" prefWidth="450.0" promptText="Password" styleClass="login-field" stylesheets="@css/login-view.css">
                <font>
                   <Font size="14.0" />
                </font>
             </PasswordField>
-            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="70.0" layoutY="378.0" size="2em" wrappingWidth="22.0" />
-            <Button fx:id="studentSignUpBtn" layoutX="60.0" layoutY="420.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="330.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
+            <PasswordField fx:id="studentConfirmPassword" layoutX="45.0" layoutY="487.0" prefHeight="50.0" prefWidth="450.0" promptText="Confirm password" styleClass="login-field" stylesheets="@css/login-view.css">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="62.0" layoutY="521.0" size="2em" wrappingWidth="22.0" />
+            <Button fx:id="studentSignUpBtn" layoutX="45.0" layoutY="597.0" mnemonicParsing="false" onAction="#signUp" prefHeight="65.0" prefWidth="450.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Hyperlink fx:id="studentSignInBtn" layoutX="288.0" layoutY="495.0" onAction="#loginForm" text="Sign in here">
+            <Hyperlink fx:id="studentSignInBtn" layoutX="328.0" layoutY="671.0" onAction="#signIn" text="Sign in here">
                <font>
-                  <Font size="17.0" />
+                  <Font size="18.0" />
                </font>
             </Hyperlink>
-            <Label layoutX="73.0" layoutY="499.0" text="Already have an account?" textFill="WHITE">
+            <Label layoutX="82.0" layoutY="675.0" text="Already have an account?" textFill="WHITE">
                <font>
-                  <Font size="16.0" />
+                  <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="studentUsername" layoutX="60.0" layoutY="217.0" prefHeight="45.0" prefWidth="330.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
+            <TextField fx:id="studentUsername" layoutX="45.0" layoutY="267.0" prefHeight="50.0" prefWidth="450.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="70.0" layoutY="244.0" size="2em" wrappingWidth="22.0" />
-            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="70.0" layoutY="312.0" size="2em" wrappingWidth="22.0" />
-            <Label layoutX="71.0" layoutY="116.0" text="Student" textFill="WHITE">
+            <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="59.0" layoutY="301.0" size="2em" wrappingWidth="22.0" />
+            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="62.0" layoutY="385.0" size="2em" wrappingWidth="22.0" />
+            <Label layoutX="59.0" layoutY="102.0" text="Student" textFill="WHITE">
                <font>
-                  <Font name="System Bold" size="16.0" />
+                  <Font name="System Bold" size="22.0" />
                </font>
             </Label>
-            <TextField fx:id="studentEmail" layoutX="60.0" layoutY="154.0" prefHeight="45.0" prefWidth="330.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
+            <TextField fx:id="studentEmail" layoutX="45.0" layoutY="178.0" prefHeight="50.0" prefWidth="450.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <FontAwesomeIconView fill="WHITE" glyphName="ENVELOPE" layoutX="70.0" layoutY="184.0" size="1.8em" wrappingWidth="22.0" />
+            <FontAwesomeIconView fill="WHITE" glyphName="ENVELOPE" layoutX="59.0" layoutY="211.0" size="1.8em" wrappingWidth="22.0" />
+            <Label fx:id="studentPassHasCap" layoutX="46.0" layoutY="406.0" text="*At least one capital letter" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="studentPassHasLow" layoutX="46.0" layoutY="427.0" text="*At least one lower letter" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="studentPass8Char" layoutX="328.0" layoutY="406.0" text="*At least 8 characters" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="studentPassHasNum" layoutX="328.0" layoutY="427.0" text="*At least One number" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="teacherForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css" visible="false">
+      <AnchorPane fx:id="teacherForm" layoutX="10.0" layoutY="10.0" styleClass="login-container" stylesheets="@css/login-view.css">
          <children>
-            <Label layoutX="65.0" layoutY="51.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Welcome back!" textFill="WHITE">
+            <Label layoutX="56.0" layoutY="48.0" styleClass="login-title" stylesheets="@css/login-view.css" text="Welcome back!" textFill="WHITE">
                <font>
-                  <Font size="28.0" />
+                  <Font size="34.0" />
                </font>
             </Label>
-            <TextField fx:id="teacherPassword" layoutX="60.0" layoutY="281.0" prefHeight="45.0" prefWidth="330.0" promptText="Password" styleClass="login-field" stylesheets="@css/login-view.css">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <PasswordField fx:id="teacherConfirmPassword" layoutX="60.0" layoutY="347.0" prefHeight="45.0" prefWidth="330.0" promptText="Confirm password" styleClass="login-field" stylesheets="@css/login-view.css">
+            <PasswordField fx:id="teacherPassword" layoutX="45.0" layoutY="351.0" prefHeight="50.0" prefWidth="450.0" promptText="Password" styleClass="login-field" stylesheets="@css/login-view.css">
                <font>
                   <Font size="14.0" />
                </font>
             </PasswordField>
-            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="70.0" layoutY="378.0" size="2em" wrappingWidth="22.0" />
-            <Button fx:id="teacherSignUpBtn" layoutX="60.0" layoutY="420.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="330.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
+            <PasswordField fx:id="teacherConfirmPassword" layoutX="45.0" layoutY="487.0" prefHeight="50.0" prefWidth="450.0" promptText="Confirm password" styleClass="login-field" stylesheets="@css/login-view.css">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="62.0" layoutY="521.0" size="2em" wrappingWidth="22.0" />
+            <Button fx:id="teacherSignUpBtn" layoutX="45.0" layoutY="597.0" mnemonicParsing="false" onAction="#signUp" prefHeight="65.0" prefWidth="450.0" styleClass="login-btn" stylesheets="@css/login-view.css" text="SignUp">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Label layoutX="47.0" layoutY="502.0" text="Already have an account?" textFill="WHITE">
+            <Hyperlink fx:id="teacherSignInBtn" layoutX="328.0" layoutY="671.0" onAction="#signIn" text="Sign in here">
                <font>
-                  <Font size="16.0" />
-               </font>
-            </Label>
-            <TextField fx:id="teacherUsername" layoutX="60.0" layoutY="217.0" prefHeight="45.0" prefWidth="330.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="70.0" layoutY="244.0" size="2em" wrappingWidth="22.0" />
-            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="70.0" layoutY="312.0" size="2em" wrappingWidth="22.0" />
-            <Label layoutX="71.0" layoutY="116.0" text="Teacher" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            <TextField fx:id="teacherEmail" layoutX="60.0" layoutY="154.0" prefHeight="45.0" prefWidth="330.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <FontAwesomeIconView fill="WHITE" glyphName="ENVELOPE" layoutX="70.0" layoutY="184.0" size="1.8em" wrappingWidth="22.0" />
-            <Hyperlink fx:id="teacherSignInBtn" layoutX="277.0" layoutY="497.0" onAction="#loginForm" text="Sign in here">
-               <font>
-                  <Font size="17.0" />
+                  <Font size="18.0" />
                </font>
             </Hyperlink>
+            <Label layoutX="82.0" layoutY="675.0" text="Already have an account?" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="teacherUsername" layoutX="45.0" layoutY="267.0" prefHeight="50.0" prefWidth="450.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="59.0" layoutY="301.0" size="2em" wrappingWidth="22.0" />
+            <FontAwesomeIconView fill="WHITE" glyphName="LOCK" layoutX="62.0" layoutY="385.0" size="2em" wrappingWidth="22.0" />
+            <Label layoutX="59.0" layoutY="102.0" text="Teacher" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+            </Label>
+            <TextField fx:id="teacherEmail" layoutX="45.0" layoutY="178.0" prefHeight="50.0" prefWidth="450.0" promptText="Username" styleClass="login-field" stylesheets="@css/login-view.css">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <FontAwesomeIconView fill="WHITE" glyphName="ENVELOPE" layoutX="59.0" layoutY="211.0" size="1.8em" wrappingWidth="22.0" />
+            <Label fx:id="teacherPassHasCap" layoutX="46.0" layoutY="406.0" text="*At least one capital letter" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="teacherPassHasLow" layoutX="46.0" layoutY="427.0" text="*At least one lower letter" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="teacherPass8Char" layoutX="328.0" layoutY="406.0" text="*At least 8 characters" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label fx:id="teacherPassHasNum" layoutX="328.0" layoutY="427.0" text="*At least One number" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
