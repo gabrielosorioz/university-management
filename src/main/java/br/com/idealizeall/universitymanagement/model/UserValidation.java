@@ -34,8 +34,10 @@ public class UserValidation {
 
     public static boolean validateUsername(String username){
         boolean isValid = false;
-        if (!username.isBlank()){
-            isValid = true;
+        if(username != null){
+            if (!username.isBlank()){
+                isValid = true;
+            }
         }
         return isValid;
     }
