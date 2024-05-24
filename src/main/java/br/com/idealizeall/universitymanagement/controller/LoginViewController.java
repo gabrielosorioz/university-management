@@ -178,16 +178,6 @@ public class LoginViewController implements Initializable {
 
     public void signUp(ActionEvent actionEvent){
 
-    void checkUsername(TextField username){
-        username.textProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                System.out.println("Alterado.");
-                username.setStyle("-fx-border-color: #ffff");
-                adminUsernameErrorMsg.setVisible(false);
-            }
-        });
-    }
         UserRoles selectedRole = getSelectedRole();
         String username = getUsername(selectedRole).getText();
         String password = getPassword(selectedRole).getText();
@@ -197,14 +187,6 @@ public class LoginViewController implements Initializable {
         boolean notBlank = fieldsAreNotBlank(getPassword(selectedRole),getUsername(selectedRole),getConfirmPassword(selectedRole));
         boolean equalPasswords = Objects.equals(password, confirmPassword);
 
-        } else {
-            userService = new UserService();
-            User newUser = User.builder()
-                    .username(adminUsername.getText())
-                    .password(adminPassword.getText())
-                    .dataCreate(LocalDateTime.now())
-                    .role(UserRoles.ADMIN)
-                    .build();
         userService = new UserService();
 
         String email = null;
@@ -212,8 +194,6 @@ public class LoginViewController implements Initializable {
         if(notBlank && equalPasswords){
             User user = userService.createUserByRole(selectedRole,username,password, null);
             try {
-
-                userService.registerUser(newUser);
                 userService.registerUser(user);
                 showAlert("Congratulations","Successfully register. ", "Now you can log in with your password and user",Alert.AlertType.INFORMATION);
                 showForm(FormType.LOGIN);
@@ -240,9 +220,16 @@ public class LoginViewController implements Initializable {
 
     }
 
-    public void showErrorUsername(TextField username){
-        username.setStyle("-fx-border-color: #fc2f2f;");
-        checkUsername(username);
+    private void resetFields(UserRoles role) {
+        getUsername(role).clear();
+        getPassword(role).clear();
+        getConfirmPassword(role).clear();
+
+        if (role == UserRoles.STUDENT) {
+            studentEmail.clear();
+        } else if (role == UserRoles.TEACHER) {
+            teacherEmail.clear();
+        }
     }
 
     public void showErrorPassword(PasswordField passwordField){
