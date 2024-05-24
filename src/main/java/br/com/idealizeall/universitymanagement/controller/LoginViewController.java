@@ -232,8 +232,12 @@ public class LoginViewController implements Initializable {
         }
     }
 
-    public void showErrorPassword(PasswordField passwordField){
-        passwordField.setStyle("-fx-border-color: #fc2f2f;");
+    private void showErrorFieldUI(TextField field){
+        field.setStyle("-fx-border-color: #b20000");
+        field.textProperty().addListener((observable) -> {
+            field.setStyle("-fx-border-color: #FFFFFF");
+        });
+    }
 
     }
 
