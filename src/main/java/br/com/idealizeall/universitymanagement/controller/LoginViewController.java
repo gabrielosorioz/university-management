@@ -145,20 +145,16 @@ public class LoginViewController implements Initializable {
     }
 
     public void switchForm(ActionEvent actionEvent){
-         UserRoles selectedItem = loginRole.getSelectionModel().getSelectedItem();
+         UserRoles selectedItem = getSelectedRole();
          switch(selectedItem){
-             case ADMIN:
-                 adminForm();
-                 break;
-             case STUDENT:
-                 studentForm();
-                 break;
-             case TEACHER:
-                 teacherForm();
-                 break;
-             default:
-                 break;
+             case ADMIN -> {showForm(FormType.ADMIN);}
+             case STUDENT -> {showForm(FormType.STUDENT);}
+             case TEACHER -> {showForm(FormType.TEACHER);}
+             default -> {
+                 showForm(FormType.LOGIN);
+             }
          }
+    }
 
     }
 
