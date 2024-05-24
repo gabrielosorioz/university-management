@@ -159,8 +159,9 @@ public class LoginViewController implements Initializable {
     }
 
     public void loadRoles(){
-        List<UserRoles> rolesList = new ArrayList<UserRoles>(Arrays.asList(UserRoles.values()));
+        List<UserRoles> rolesList = new ArrayList<>(Arrays.asList(UserRoles.values()));
         ObservableList dataList = FXCollections.observableArrayList(rolesList);
+        loginRole.setPromptText("Choose role: ");
         loginRole.setItems(dataList);
     }
 
