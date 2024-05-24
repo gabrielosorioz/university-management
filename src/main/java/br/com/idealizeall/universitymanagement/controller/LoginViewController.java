@@ -68,6 +68,44 @@ public class LoginViewController implements Initializable {
 
     private UserService userService;
 
+    enum FormType {
+        LOGIN, ADMIN, STUDENT, TEACHER,
+    }
+
+    void loadPassLabels(){
+        studentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
+        adminPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
+        teacherPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
+    }
+    void showForm(FormType formType){
+        setFormVisibility(false,false,false,false);
+        switch (formType){
+            case LOGIN -> {
+                setFormVisibility(true, false,false,false);
+            }
+            case ADMIN -> {
+                setFormVisibility(false,true,false,false);
+                addPasswordListener(UserRoles.ADMIN,getPassword(UserRoles.ADMIN));
+            }
+            case STUDENT -> {
+                setFormVisibility(false, false, true, false);
+                addPasswordListener(UserRoles.STUDENT,getPassword(UserRoles.STUDENT));
+
+            }
+            case TEACHER -> {
+                setFormVisibility(false,false,false,true);
+                addPasswordListener(UserRoles.TEACHER,getPassword(UserRoles.TEACHER));
+            }
+        }
+    }
+
+    void setFormVisibility(boolean login, boolean admin, boolean student, boolean teacher){
+        loginForm.setVisible(login);
+        adminForm.setVisible(admin);
+        studentForm.setVisible(student);
+        teacherForm.setVisible(teacher);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loginForm();
