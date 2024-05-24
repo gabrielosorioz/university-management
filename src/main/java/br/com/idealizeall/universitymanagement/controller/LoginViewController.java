@@ -108,40 +108,9 @@ public class LoginViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loginForm();
-
-    }
-
-    public void loginForm(){
-        loginForm.setVisible(true);
-        adminForm.setVisible(false);
-        studentForm.setVisible(false);
-        teacherForm.setVisible(false);
-        loadRoles();
-    }
-
-    public void adminForm(){
-        adminForm.setVisible(true);
-        loginForm.setVisible(false);
-        studentForm.setVisible(false);
-        teacherForm.setVisible(false);
-        checkPassword(adminPassword);
-        checkUsername(adminUsername);
-    }
-
-    public void studentForm(){
-        studentForm.setVisible(true);
-        adminForm.setVisible(false);
-        loginForm.setVisible(false);
-        teacherForm.setVisible(false);
-    }
-
-    public void teacherForm(){
-        teacherForm.setVisible(true);
-        studentForm.setVisible(false);
-        adminForm.setVisible(false);
-        loginForm.setVisible(false);
-
+          signIn();
+          loadRoles();
+          loadPassLabels();
     }
 
     public void switchForm(ActionEvent actionEvent){
