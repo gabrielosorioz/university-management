@@ -268,16 +268,27 @@ public class LoginViewController implements Initializable {
         labels.get(3).setStyle("-fx-text-fill:" + (hasLow ? "#3dcc00;" : "#FFFFFF"));
     }
 
-    boolean fieldIsNotBlank(PasswordField password, TextField username, PasswordField confirmPassword){
-        boolean isValid = false;
+    void handleUserException(UserException exception, UserRoles role){
+        switch (exception.getMessage()){
+            case "Username is blank" -> {
+                showAlert(exception.getMessage(), "Username cannot be null", "please fill the username", Alert.AlertType.ERROR);
+            }
+            case "Username already exists" -> {
+                showAlert(exception.getMessage(),"Username ", "Please choose another username, if it's you, sign in",Alert.AlertType.ERROR);
+            }
 
-        boolean hasPass = !password.getText().isBlank();
-        boolean hasUser = !username.getText().isBlank();
-        boolean hasCPass = !confirmPassword.getText().isBlank();
-
-        if(hasCPass && hasUser && hasPass){
-            isValid = true;
+            case "Invalid user password" -> {
+                showAlert(exception.getMessage(),"Insecure password", "Required: \n*at least one capital letter" +
+                                "\n*at least one lower letter" +
+                                "\n*at least one number"+
+                                "\n*at least 8 characters"
+                        ,Alert.AlertType.ERROR);
+                showErrorFieldUI(getPassword(role));
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + exception.getMessage());
         }
+
+    }
 
         return isValid;
     }
