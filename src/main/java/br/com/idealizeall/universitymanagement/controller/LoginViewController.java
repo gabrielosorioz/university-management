@@ -156,6 +156,8 @@ public class LoginViewController implements Initializable {
          }
     }
 
+    public void signIn(){
+        showForm(FormType.LOGIN);
     }
 
     public void loadRoles(){
