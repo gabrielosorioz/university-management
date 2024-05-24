@@ -3,13 +3,7 @@ package br.com.idealizeall.universitymanagement.controller;
 import br.com.idealizeall.universitymanagement.exception.UserException;
 import br.com.idealizeall.universitymanagement.model.User;
 import br.com.idealizeall.universitymanagement.model.UserRoles;
-import br.com.idealizeall.universitymanagement.model.UserValidation;
 import br.com.idealizeall.universitymanagement.service.UserService;
-import javafx.animation.Animation;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,105 +11,60 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class LoginViewController implements Initializable {
 
     @FXML
-    private PasswordField adminConfirmPassword;
-
+    private AnchorPane adminForm,loginForm,studentForm,teacherForm;
     @FXML
-    private AnchorPane adminForm;
-
+    private PasswordField adminConfirmPassword,adminPassword;
     @FXML
-    private PasswordField adminPassword;
-
-    @FXML
-    private Hyperlink adminSignInBtn;
-
-    @FXML
-    private Button adminSignUpBtn;
-
+    private Hyperlink adminSignInBtn,studentSignInBtn,teacherSignInBtn;
     @FXML
     private TextField adminUsername;
-
-    @FXML
-    private Button loginBtn;
-
-    @FXML
-    private AnchorPane loginForm;
-
     @FXML
     private PasswordField loginPassword;
 
     @FXML
     private ComboBox<UserRoles> loginRole;
-
     @FXML
     private TextField loginUsername;
-
     @FXML
-    private Label adminUsernameErrorMsg;
-
+    private PasswordField studentConfirmPassword,studentPassword;
     @FXML
-    private PasswordField studentConfirmPassword;
-
+    private Button studentSignUpBtn,teacherSignUpBtn,adminSignUpBtn,loginBtn;
     @FXML
-    private TextField studentEmail;
-
+    private TextField studentUsername,studentEmail;
     @FXML
-    private AnchorPane studentForm;
-
+    private PasswordField teacherPassword,teacherConfirmPassword;
     @FXML
-    private TextField studentPassword;
-
+    private TextField teacherUsername,teacherEmail;
     @FXML
-    private Hyperlink studentSignInBtn;
-
+    private Label admPassHasNum,admPass8Char,admPassHasCap,admPassHasLow, adminUsernameErrorMsg;
     @FXML
-    private Button studentSignUpBtn;
-
+    private Label teacherPassHasNum,teacherPass8Char,teacherPassHasCap,teacherPassHasLow;
     @FXML
-    private TextField studentUsername;
+    private Label studentPassHasNum,studentPass8Char,studentPassHasCap ,studentPassHasLow;
+    /**
+     * No futuro , posso refatorar de tal forma que seja criado uma  lista do
+     * tipo HashMap<FormType,`componentes correspondentes a view`> no qual
+     * tenha um conjunto de componentes
+     * que correspondem a cada view. Por exemplo:
+     * abaixo temos um enum com o nome de cada view
+     * enum FormType {
+     *     ADMIN
+     * }
+     * HashMap<FormType,Password> que contenha os campos de senha de acordo com a chave do tipo FormType
+     * e podemos também criar um enum Possuind o nome de cada campo como password,email etc...
+     * podemos encapsular toda essa lógica em um ou mais métodos.
+     * */
 
-    @FXML
-    private PasswordField teacherConfirmPassword;
 
-    @FXML
-    private TextField teacherEmail;
-
-    @FXML
-    private AnchorPane teacherForm;
-
-    @FXML
-    private TextField teacherPassword;
-
-    @FXML
-    private Hyperlink teacherSignInBtn;
-
-    @FXML
-    private Button teacherSignUpBtn;
-
-    @FXML
-    private TextField teacherUsername;
-
-    @FXML
-    private Label admPassHasNum;
-
-    @FXML
-    private Label admPassHasLow;
-
-    @FXML
-    private Label admPassHasCap;
-
-    @FXML
-    private Label admPass8Char;
+    private List<Label> studentPassLabels;
+    private List<Label> adminPassLabels;
+    private List<Label> teacherPassLabels;
 
     private UserService userService;
 
