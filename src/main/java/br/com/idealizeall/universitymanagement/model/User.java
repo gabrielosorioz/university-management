@@ -12,7 +12,7 @@ public class User {
 
     public User(UserBuilder userBuilder) {
         this.id = userBuilder.id;
-        this.username = userBuilder.username;
+        this.username = userBuilder.username.toLowerCase();
         this.password = userBuilder.password;
         this.email = userBuilder.email;
         this.dataCreate = userBuilder.dataCreate;
