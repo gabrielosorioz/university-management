@@ -246,15 +246,15 @@ public class LoginViewController implements Initializable {
         if(isBlank) this.showErrorFieldUI(getConfirmPassword(role));
     }
 
-    void handleUserException(UserException exception){
-        String exceptionMessage = exception.getMessage();
-        switch (exceptionMessage){
-            case "Invalid user password":
-                showErrorPassword(adminPassword);
-                break;
-            case "User already exists":
-                showErrorUsername(adminUsername);
-            case "Username is blank":
+    private void addPasswordListener(UserRoles role,TextField passwordField){
+        passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            boolean hasCap = newValue.matches(".*[A-Z].*");
+            boolean hasLow  = newValue.matches(".*[a-z].*");
+            boolean hasNum = newValue.matches(".*\\d.*");
+            boolean hasLength = newValue.length() > 7;
+            addPasswordValidationUI(role,hasCap,hasLow,hasNum,hasLength);
+        });
+    }
 
     private void addPasswordValidationUI(UserRoles role,boolean hasCap, boolean hasLow , boolean hasNum, boolean hasLength){
         List<Label> labels;
