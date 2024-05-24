@@ -239,6 +239,11 @@ public class LoginViewController implements Initializable {
         });
     }
 
+    private void highLightEmptyFields(UserRoles role){
+        boolean isBlank = getUsername(role).getText().isBlank();
+        if(isBlank) this.showErrorFieldUI(getUsername(role));
+        if(isBlank) this.showErrorFieldUI(getPassword(role));
+        if(isBlank) this.showErrorFieldUI(getConfirmPassword(role));
     }
 
     void handleUserException(UserException exception){
