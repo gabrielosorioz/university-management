@@ -47,54 +47,74 @@ public class LoginViewController implements Initializable {
     private Label teacherPassHasNum,teacherPass8Char,teacherPassHasCap,teacherPassHasLow;
     @FXML
     private Label studentPassHasNum,studentPass8Char,studentPassHasCap ,studentPassHasLow;
-    /**
-     * No futuro , posso refatorar de tal forma que seja criado uma  lista do
-     * tipo HashMap<FormType,`componentes correspondentes a view`> no qual
-     * tenha um conjunto de componentes
-     * que correspondem a cada view. Por exemplo:
-     * abaixo temos um enum com o nome de cada view
-     * enum FormType {
-     *     ADMIN
-     * }
-     * HashMap<FormType,Password> que contenha os campos de senha de acordo com a chave do tipo FormType
-     * e podemos também criar um enum Possuind o nome de cada campo como password,email etc...
-     * podemos encapsular toda essa lógica em um ou mais métodos.
-     * */
 
+    private TextField currentUsername, currentPassword, currentConfirmPassword, currentEmail;
 
-    private List<Label> studentPassLabels;
-    private List<Label> adminPassLabels;
-    private List<Label> teacherPassLabels;
-
+    private List<Label> currentPassLabels;
+    private List<UserRoles> rolesList;
+    private ObservableList observableList;
     private UserService userService;
 
     enum FormType {
         LOGIN, ADMIN, STUDENT, TEACHER,
     }
 
-    void loadPassLabels(){
-        studentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
-        adminPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
-        teacherPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
+    void loadCurrentFields(FormType formType){
+        switch (formType) {
+            case ADMIN -> {
+                currentUsername = adminUsername;
+                currentPassword = adminPassword;
+                currentConfirmPassword = adminConfirmPassword;
+                currentEmail = null;
+                currentPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
+            }
+            case STUDENT -> {
+                currentUsername = studentUsername;
+                currentPassword = studentPassword;
+                currentConfirmPassword = studentConfirmPassword;
+                currentEmail = studentEmail;
+                currentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
+            }
+            case TEACHER -> {
+                currentUsername = teacherUsername;
+                currentPassword = teacherPassword;
+                currentConfirmPassword = teacherConfirmPassword;
+                currentEmail = teacherEmail;
+                currentPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
+            }
+        }
+    }
+
+    void loadRoles(){
+        if(getSelectedRole() == null){
+            setFormVisibility(false,false,false,false);
+            rolesList = Arrays.asList(UserRoles.values());
+            observableList = FXCollections.observableArrayList(rolesList);
+            loginRole.setPromptText("Choose role: ");
+            loginRole.setItems(observableList);
+        }
     }
     void showForm(FormType formType){
-        setFormVisibility(false,false,false,false);
+        loadRoles();
         switch (formType){
             case LOGIN -> {
                 setFormVisibility(true, false,false,false);
             }
             case ADMIN -> {
                 setFormVisibility(false,true,false,false);
-                addPasswordListener(UserRoles.ADMIN,getPassword(UserRoles.ADMIN));
+                loadCurrentFields(FormType.ADMIN);
+                addPasswordListener(currentPassword);
             }
             case STUDENT -> {
                 setFormVisibility(false, false, true, false);
-                addPasswordListener(UserRoles.STUDENT,getPassword(UserRoles.STUDENT));
+                loadCurrentFields(FormType.STUDENT);
+                addPasswordListener(currentPassword);
 
             }
             case TEACHER -> {
                 setFormVisibility(false,false,false,true);
-                addPasswordListener(UserRoles.TEACHER,getPassword(UserRoles.TEACHER));
+                loadCurrentFields(FormType.TEACHER);
+                addPasswordListener(currentPassword);
             }
         }
     }
@@ -114,7 +134,9 @@ public class LoginViewController implements Initializable {
     }
 
     public void switchForm(ActionEvent actionEvent){
-         UserRoles selectedItem = getSelectedRole();
+        resetFields();
+        loadRoles();
+        UserRoles selectedItem = getSelectedRole();
          switch(selectedItem){
              case ADMIN -> {showForm(FormType.ADMIN);}
              case STUDENT -> {showForm(FormType.STUDENT);}
