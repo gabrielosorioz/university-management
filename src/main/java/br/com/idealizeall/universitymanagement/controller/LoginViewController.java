@@ -166,59 +166,51 @@ public class LoginViewController implements Initializable {
     }
 
     public void signUp(ActionEvent actionEvent){
+        if(currentUsername == null || currentPassword == null || currentConfirmPassword == null){
+            showAlert("Error", "Form not loaded", "Please select a valid form to sign up", Alert.AlertType.ERROR);
+            return;
+        }
 
-        UserRoles selectedRole = getSelectedRole();
-        String username = getUsername(selectedRole).getText();
-        String password = getPassword(selectedRole).getText();
-        String confirmPassword = getConfirmPassword(selectedRole).getText();
+        String usernameTxt = currentUsername.getText();
+        String passwordTxt = currentPassword.getText();
+        String confirmPasswordTxt = currentConfirmPassword.getText();
+        String emailTxt = (currentEmail != null) ? currentEmail.getText() : null;
 
+        boolean notBlank = fieldsAreNotBlank(usernameTxt, passwordTxt, confirmPasswordTxt,emailTxt);
+        boolean equalPasswords = passwordTxt.equals(confirmPasswordTxt);
 
-        boolean notBlank = fieldsAreNotBlank(getPassword(selectedRole),getUsername(selectedRole),getConfirmPassword(selectedRole));
-        boolean equalPasswords = Objects.equals(password, confirmPassword);
+        if(!notBlank){
+            highLightEmptyFields();
+            showAlert("Fields are empty", "", "Please fill all fields", Alert.AlertType.ERROR);
+            return;
+        }
 
-        userService = new UserService();
+        if(!equalPasswords){
+            showErrorFieldUI(currentConfirmPassword);
+            showAlert("Password error","","Passwords do not match", Alert.AlertType.ERROR);
+            return;
+        }
 
-        String email = null;
-
-        if(notBlank && equalPasswords){
-            User user = userService.createUserByRole(selectedRole,username,password, null);
-            try {
+        try {
+            User user = createUser(currentUsername, currentPassword,currentEmail);
+            if(user != null){
                 userService.registerUser(user);
-                showAlert("Congratulations","Successfully register. ", "Now you can log in with your password and user",Alert.AlertType.INFORMATION);
+                showAlert("Congratulations","Successfully registered", "Now you can log in with your user and password",Alert.AlertType.INFORMATION);
+                resetFields();
                 showForm(FormType.LOGIN);
-                resetFields(selectedRole);
-            } catch (UserException e) {
-                handleUserException(e,selectedRole);
             }
-            userService = null;
+        } catch (UserException e){
+            handleUserException(e);
         }
-        else if (!notBlank && equalPasswords){
-            highLightEmptyFields(selectedRole);
-            showAlert("Fields are empty","", "Please fill all fields",Alert.AlertType.ERROR);
-        }
-        else if (username.isBlank()){
-            highLightEmptyFields(selectedRole);
-            showAlert("Invalid Username","Username is blank","Please fill username correctly",Alert.AlertType.ERROR);
-        }
-        else if(!equalPasswords && notBlank) {
-
-            showErrorFieldUI(getPassword(selectedRole));
-
-            showAlert("Password error","", "password are different",Alert.AlertType.ERROR);
-        }
-
     }
 
-    private void resetFields(UserRoles role) {
-        getUsername(role).clear();
-        getPassword(role).clear();
-        getConfirmPassword(role).clear();
-
-        if (role == UserRoles.STUDENT) {
-            studentEmail.clear();
-        } else if (role == UserRoles.TEACHER) {
-            teacherEmail.clear();
-        }
+    private void resetFields() {
+        if (currentUsername != null) currentUsername.clear();
+        if (currentEmail != null) currentEmail.clear();
+        if (currentPassword != null) currentPassword.clear();
+        if (currentConfirmPassword != null) currentConfirmPassword.clear();
+        if (currentEmail != null) currentEmail.clear();
+        loginRole.setPromptText("Choose role: ");
     }
 
     private void showErrorFieldUI(TextField field){
