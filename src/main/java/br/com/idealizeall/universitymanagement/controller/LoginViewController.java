@@ -318,7 +318,22 @@ public class LoginViewController implements Initializable {
         return loginRole.getSelectionModel().getSelectedItem();
     }
 
-    private boolean fieldsAreNotBlank(TextField... fields) {
-        return !Arrays.stream(fields).allMatch(field -> field.getText().isBlank());
+    private boolean fieldsAreNotBlank(String... fields) {
+        return !Arrays.stream(fields)
+                .filter(Objects::nonNull)
+                .allMatch(field -> field.isBlank());
     }
+
+    private User createUser(TextField username, TextField password, TextField email){
+        String usrname = username.getText();
+        String pass = password.getText();
+        String em = (email != null) ? email.getText() : null;
+        UserRoles selectedRole = getSelectedRole();
+        if (selectedRole != null) {
+            userService = new UserService();
+            return userService.createUserByRole(selectedRole, usrname, pass, em);
+        }
+        return null;
+    }
+
 }
