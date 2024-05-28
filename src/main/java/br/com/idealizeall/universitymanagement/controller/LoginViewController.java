@@ -279,41 +279,6 @@ public class LoginViewController implements Initializable {
 
     }
 
-    private TextField getUsername(UserRoles role){
-        switch (role){
-            case ADMIN -> { return this.adminUsername; }
-            case STUDENT -> {return this.studentUsername;}
-            case TEACHER -> {return this.teacherUsername;}
-            default -> {throw new IllegalArgumentException("Invalid user role");}
-        }
-    }
-
-    private TextField getPassword(UserRoles role){
-        switch (role){
-            case ADMIN -> { return this.adminPassword; }
-            case STUDENT -> {return this.studentPassword;}
-            case TEACHER -> {return this.teacherPassword;}
-            default -> {throw new IllegalArgumentException("Invalid user role");}
-        }
-    }
-
-    private TextField getConfirmPassword(UserRoles role){
-        switch (role){
-            case ADMIN -> { return this.adminConfirmPassword; }
-            case STUDENT -> {return this.studentConfirmPassword;}
-            case TEACHER -> {return this.teacherConfirmPassword;}
-            default -> {throw new IllegalArgumentException("Invalid user role");}
-        }
-    }
-
-    private TextField getEmail(UserRoles role){
-        switch (role){
-            case STUDENT -> {return this.studentEmail;}
-            case TEACHER -> {return this.teacherEmail;}
-            default -> {throw new IllegalArgumentException("Invalid user role");}
-        }
-    }
-
     private UserRoles getSelectedRole(){
         return loginRole.getSelectionModel().getSelectedItem();
     }
