@@ -139,22 +139,11 @@ public class LoginViewController implements Initializable {
              case ADMIN -> {showForm(FormType.ADMIN);}
              case STUDENT -> {showForm(FormType.STUDENT);}
              case TEACHER -> {showForm(FormType.TEACHER);}
-             default -> {
-                 showForm(FormType.LOGIN);
-             }
          }
     }
 
     public void signIn(){
         showForm(FormType.LOGIN);
-    }
-
-    public void loadRoles(){
-        List<UserRoles> rolesList = new ArrayList<>(Arrays.asList(UserRoles.values()));
-        ObservableList dataList = FXCollections.observableArrayList(rolesList);
-        loginRole.setPromptText("Choose role: ");
-        loginRole.setItems(dataList);
-
     }
 
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
