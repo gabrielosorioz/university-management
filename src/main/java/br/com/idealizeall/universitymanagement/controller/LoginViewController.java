@@ -128,9 +128,7 @@ public class LoginViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-          signIn();
-          loadRoles();
-          loadPassLabels();
+        signIn();
     }
 
     public void switchForm(ActionEvent actionEvent){
