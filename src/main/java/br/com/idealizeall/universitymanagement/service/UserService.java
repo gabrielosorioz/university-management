@@ -33,7 +33,7 @@ public class UserService {
                    throw new UserException("Username is blank");
                }
            } else {
-               throw new UserException("Invalid user password" + user.getPassword());
+               throw new UserException("Invalid user password");
            }
        } else {
            throw new UserException("Username already exists");
