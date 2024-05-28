@@ -209,51 +209,56 @@ public class LoginViewController implements Initializable {
         });
     }
 
-    private void highLightEmptyFields(UserRoles role){
-        boolean isBlank = getUsername(role).getText().isBlank();
-        if(isBlank) this.showErrorFieldUI(getUsername(role));
-        if(isBlank) this.showErrorFieldUI(getPassword(role));
-        if(isBlank) this.showErrorFieldUI(getConfirmPassword(role));
+    private void highLightEmptyFields(){
+        String email = (currentEmail != null) ? currentEmail.getText() : null;
+        if(currentUsername.getText().isBlank()){
+            showErrorFieldUI(currentUsername);
+        }
+        if(currentPassword.getText().isBlank()){
+            showErrorFieldUI(currentPassword);
+        }
+        if(currentConfirmPassword.getText().isBlank()){
+            showErrorFieldUI(currentConfirmPassword);
+        }
+        if(email != null && email.isBlank()){
+            showErrorFieldUI(currentEmail);
+        }
+
     }
 
-    private void addPasswordListener(UserRoles role,TextField passwordField){
+    private void addPasswordListener(TextField passwordField){
         passwordField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             boolean hasCap = newValue.matches(".*[A-Z].*");
             boolean hasLow  = newValue.matches(".*[a-z].*");
             boolean hasNum = newValue.matches(".*\\d.*");
             boolean hasLength = newValue.length() > 7;
-            addPasswordValidationUI(role,hasCap,hasLow,hasNum,hasLength);
+            addPasswordValidationUI(hasCap,hasLow,hasNum,hasLength);
         });
     }
 
-    private void addPasswordValidationUI(UserRoles role,boolean hasCap, boolean hasLow , boolean hasNum, boolean hasLength){
-        List<Label> labels;
-        switch (role) {
-            case ADMIN -> labels = adminPassLabels;
-            case TEACHER -> labels = teacherPassLabels;
-            case STUDENT -> labels = studentPassLabels;
-            default -> throw new IllegalArgumentException("Invalid user role");
-        }
+    private void addPasswordValidationUI(boolean hasCap, boolean hasLow , boolean hasNum, boolean hasLength){
+
         if(hasLength && hasCap && hasLow && hasNum){
-            getPassword(role).setStyle("-fx-border-color: #3dcc00;");
+            currentPassword.setStyle("-fx-border-color: #3dcc00;");
         } else {
-            getPassword(role).setStyle("-fx-border-color: #FFFFFF;");
+            currentPassword.setStyle("-fx-border-color: #FFFFFF;");
         }
 
-        /** Update each label's color based on the corresponding validation rule **/
-        labels.get(0).setStyle("-fx-text-fill:" + (hasNum ? "#3dcc00;" : "#FFFFFF"));
-        labels.get(1).setStyle("-fx-text-fill:" + (hasLength ? "#3dcc00;" : "#FFFFFF"));
-        labels.get(2).setStyle("-fx-text-fill:" + (hasCap ? "#3dcc00;" : "#FFFFFF"));
-        labels.get(3).setStyle("-fx-text-fill:" + (hasLow ? "#3dcc00;" : "#FFFFFF"));
+        currentPassLabels.get(0).setStyle("-fx-text-fill:" + (hasNum ? "#3dcc00;" : "#FFFFFF"));
+        currentPassLabels.get(1).setStyle("-fx-text-fill:" + (hasLength ? "#3dcc00;" : "#FFFFFF"));
+        currentPassLabels.get(2).setStyle("-fx-text-fill:" + (hasCap ? "#3dcc00;" : "#FFFFFF"));
+        currentPassLabels.get(3).setStyle("-fx-text-fill:" + (hasLow ? "#3dcc00;" : "#FFFFFF"));
     }
 
-    void handleUserException(UserException exception, UserRoles role){
+    private void handleUserException(UserException exception){
         switch (exception.getMessage()){
             case "Username is blank" -> {
                 showAlert(exception.getMessage(), "Username cannot be null", "please fill the username", Alert.AlertType.ERROR);
+                showErrorFieldUI(currentUsername);
             }
             case "Username already exists" -> {
                 showAlert(exception.getMessage(),"Username ", "Please choose another username, if it's you, sign in",Alert.AlertType.ERROR);
+                showErrorFieldUI(currentUsername);
             }
 
             case "Invalid user password" -> {
@@ -262,7 +267,12 @@ public class LoginViewController implements Initializable {
                                 "\n*at least one number"+
                                 "\n*at least 8 characters"
                         ,Alert.AlertType.ERROR);
-                showErrorFieldUI(getPassword(role));
+                showErrorFieldUI(currentPassword);
+            }
+
+            case "Invalid user email" -> {
+                showErrorFieldUI(currentEmail);
+                showAlert("Invalid Email","Fill in the email field correctly","Example: maria@example.com", Alert.AlertType.ERROR);
             }
             default -> throw new IllegalStateException("Unexpected value: " + exception.getMessage());
         }
