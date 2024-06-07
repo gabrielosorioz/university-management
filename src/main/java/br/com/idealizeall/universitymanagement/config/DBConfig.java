@@ -20,12 +20,10 @@ public class DBConfig {
             if (conn != null) {
                 log.info("------------------------Connection is established-------------------------");
                 return conn;
-            } else {
-                log.severe("----------------------Error at establish connection with database--------------------------");
             }
 
         } catch (SQLException ex ) {
-            log.severe("Error at database" + ex.getMessage() + ex.getLocalizedMessage());
+            log.severe("Error at database " + ex.getMessage() + ex.getLocalizedMessage());
         } catch (ClassNotFoundException ex) {
             log.severe("Error at load driver class of database.");
         }
