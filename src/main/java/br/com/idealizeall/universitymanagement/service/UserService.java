@@ -5,14 +5,16 @@ import br.com.idealizeall.universitymanagement.model.User;
 import br.com.idealizeall.universitymanagement.model.UserRoles;
 import br.com.idealizeall.universitymanagement.model.UserValidation;
 import br.com.idealizeall.universitymanagement.repository.UserRepository;
-
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 public class UserService {
     private final Logger log = Logger.getLogger(UserService.class.getName());
+    private UserRepository userRepository;
 
-    UserRepository userRepository = new UserRepository();
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public User createUserByRole(UserRoles role, String username, String password, String email){
         return User.builder()
@@ -25,26 +27,10 @@ public class UserService {
     }
 
     public void registerUser(User user) throws UserException {
-       if(!userRepository.existsByUsername(user.getUsername())){
-           if(UserValidation.validatePassword(user.getPassword())){
-               if(UserValidation.validateUsername(user.getUsername())){
-
-               } else {
-                   throw new UserException("Username is blank");
-               }
-           } else {
-               throw new UserException("Invalid user password");
-           }
-       } else {
-           throw new UserException("Username already exists");
-       }
+        if(userRepository.existsByUsername(user.getUsername())){
+            throw new UserException("Username already exists");
+        }
+        UserValidation.validateUser(user);
         userRepository.save(user);
-
     }
-
-
-
-
-
-    
 }

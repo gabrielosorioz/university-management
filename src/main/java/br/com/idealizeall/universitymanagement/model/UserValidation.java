@@ -1,8 +1,11 @@
 package br.com.idealizeall.universitymanagement.model;
 
+import br.com.idealizeall.universitymanagement.exception.UserException;
+import br.com.idealizeall.universitymanagement.repository.UserRepository;
+
 public class UserValidation {
 
-    public static boolean validatePassword(String password){
+    private static boolean validatePassword(String password){
         boolean isValid = false;
         if (password.length() > 7){
             char c;
@@ -32,7 +35,7 @@ public class UserValidation {
         return isValid;
     }
 
-    public static boolean validateUsername(String username){
+    private static boolean validateUsername(String username){
         boolean isValid = false;
         if(username != null){
             if (!username.isBlank()){
@@ -41,4 +44,31 @@ public class UserValidation {
         }
         return isValid;
     }
+
+    private static boolean validateEmail(String email){
+            if (email == null || email.isBlank()) {
+                return false;
+            }
+            // Regex pattern for a valid email address
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+            return email.matches(emailRegex);
+    }
+
+    public static void validateUser (User user) throws UserException {
+        if(!validateEmail(user.getEmail())){
+            if(user.getRole() != UserRoles.ADMIN){
+                throw new UserException("Invalid email");
+            }
+        }
+
+        if(!validateUsername(user.getUsername())){
+            throw new UserException("Invalid username");
+        }
+
+        if(!validatePassword(user.getPassword())){
+            throw new UserException("Invalid password");
+        }
+    }
+
+
 }
