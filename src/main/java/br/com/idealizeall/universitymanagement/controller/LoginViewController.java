@@ -59,6 +59,10 @@ public class LoginViewController implements Initializable {
         LOGIN, ADMIN, STUDENT, TEACHER,
     }
 
+    public LoginViewController(UserService userService){
+        this.userService = userService;
+    }
+
     void loadCurrentFields(FormType formType){
         switch (formType) {
             case ADMIN -> {
@@ -252,8 +256,10 @@ public class LoginViewController implements Initializable {
 
     private void handleUserException(UserException exception){
         switch (exception.getMessage()){
-            case "Username is blank" -> {
-                showAlert(exception.getMessage(), "Username cannot be null", "please fill the username", Alert.AlertType.ERROR);
+            case "Invalid username" -> {
+                if(currentUsername.getText().isBlank()){
+                    showAlert(exception.getMessage(), "Username cannot be null", "please fill the username", Alert.AlertType.ERROR);
+                }
                 showErrorFieldUI(currentUsername);
             }
             case "Username already exists" -> {
@@ -261,7 +267,7 @@ public class LoginViewController implements Initializable {
                 showErrorFieldUI(currentUsername);
             }
 
-            case "Invalid user password" -> {
+            case "Invalid password" -> {
                 showAlert(exception.getMessage(),"Insecure password", "Required: \n*at least one capital letter" +
                                 "\n*at least one lower letter" +
                                 "\n*at least one number"+
@@ -270,7 +276,7 @@ public class LoginViewController implements Initializable {
                 showErrorFieldUI(currentPassword);
             }
 
-            case "Invalid user email" -> {
+            case "Invalid email" -> {
                 showErrorFieldUI(currentEmail);
                 showAlert("Invalid Email","Fill in the email field correctly","Example: maria@example.com", Alert.AlertType.ERROR);
             }
@@ -295,7 +301,6 @@ public class LoginViewController implements Initializable {
         String em = (email != null) ? email.getText() : null;
         UserRoles selectedRole = getSelectedRole();
         if (selectedRole != null) {
-            userService = new UserService();
             return userService.createUserByRole(selectedRole, usrname, pass, em);
         }
         return null;
