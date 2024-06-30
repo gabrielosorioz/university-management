@@ -188,6 +188,7 @@ public class LoginViewController implements Initializable {
             User user = createUser(currentUsername, currentPassword,currentEmail);
             if(user != null){
                 userService.registerUser(user);
+                registerUserByRole(user.getRole());
                 showAlert("Congratulations","Successfully registered", "Now you can log in with your user and password",Alert.AlertType.INFORMATION);
                 resetFields();
                 showForm(FormType.LOGIN);
@@ -304,6 +305,21 @@ public class LoginViewController implements Initializable {
             return userService.createUserByRole(selectedRole, usrname, pass, em);
         }
         return null;
+    }
+
+    private void registerUserByRole(UserRoles userRole){
+        switch (userRole) {
+            case STUDENT -> registerStudent();
+        }
+    }
+
+    private void registerStudent(){
+        Student student = Student.builder()
+                .status(Status.APPROVAL.name())
+                .dataInsert(LocalDateTime.now())
+                .build();
+        studentService.registerStudent(student);
+
     }
 
 }
