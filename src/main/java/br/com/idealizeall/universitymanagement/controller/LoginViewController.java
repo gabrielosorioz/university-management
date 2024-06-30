@@ -1,8 +1,11 @@
 package br.com.idealizeall.universitymanagement.controller;
 
 import br.com.idealizeall.universitymanagement.exception.UserException;
+import br.com.idealizeall.universitymanagement.model.Status;
+import br.com.idealizeall.universitymanagement.model.Student;
 import br.com.idealizeall.universitymanagement.model.User;
 import br.com.idealizeall.universitymanagement.model.UserRoles;
+import br.com.idealizeall.universitymanagement.service.StudentService;
 import br.com.idealizeall.universitymanagement.service.UserService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +14,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import org.w3c.dom.Text;
+
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class LoginViewController implements Initializable {
@@ -54,13 +60,15 @@ public class LoginViewController implements Initializable {
     private List<UserRoles> rolesList;
     private ObservableList observableList;
     private UserService userService;
+    private StudentService studentService;
 
     enum FormType {
         LOGIN, ADMIN, STUDENT, TEACHER,
     }
 
-    public LoginViewController(UserService userService){
+    public LoginViewController(UserService userService, StudentService studentService){
         this.userService = userService;
+        this.studentService = studentService;
     }
 
     void loadCurrentFields(FormType formType){
