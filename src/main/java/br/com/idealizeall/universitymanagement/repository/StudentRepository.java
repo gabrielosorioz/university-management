@@ -20,8 +20,8 @@ public class StudentRepository {
     }
 
     public void save (Student newStudent){
-        final String SQL = "INSERT INTO student (student_id,data_insert,status)" +
-                " VALUES (?,?,?)";
+        final String SQL = "INSERT INTO student (student_id,data_insert,status,user_id)" +
+                " VALUES (?,?,?,?)";
 
         Integer studentID;
         Integer newStudentID = newStudent.getStudentId();
@@ -39,6 +39,7 @@ public class StudentRepository {
             pstmt.setInt(1,studentID);
             pstmt.setTimestamp(2, Timestamp.valueOf(newStudent.getDataInsert()));
             pstmt.setString(3,newStudent.getStatus());
+            pstmt.setInt(4,newStudent.getUser().getId());
             boolean rowAffected = pstmt.executeUpdate() == 1;
 
             if (rowAffected){
@@ -48,7 +49,6 @@ public class StudentRepository {
         } catch (SQLException ex){
             log.severe("Error at insert student " + ex.getMessage() + "SQL State: " + ex.getSQLState());
         }
-
 
     }
 
