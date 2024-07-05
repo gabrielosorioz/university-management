@@ -16,7 +16,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUserByRole(UserRoles role, String username, String password, String email){
+    public User createUserByRole(Role role, String username, String password, String email){
         return User.builder()
                 .username(username)
                 .email(email)

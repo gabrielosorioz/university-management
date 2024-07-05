@@ -8,7 +8,7 @@ public class User {
     private final String email;
     private final LocalDateTime dataCreate;
     private final LocalDateTime dataUpdate;
-    private final UserRoles role;
+    private final Role role;
 
     public User(UserBuilder userBuilder) {
         this.id = userBuilder.id;
@@ -32,7 +32,8 @@ public class User {
         private String email;
         private LocalDateTime dataCreate;
         private LocalDateTime dataUpdate;
-        private UserRoles role;
+        private Role role;
+
 
         public UserBuilder id(Integer id){
             this.id = id;
@@ -59,7 +60,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder role(UserRoles role){
+        public UserBuilder role(Role role){
             this.role = role;
             return this;
         }
@@ -94,7 +95,7 @@ public class User {
         return dataUpdate;
     }
 
-    public UserRoles getRole() {
+    public Role getRole() {
         return role;
     }
 }

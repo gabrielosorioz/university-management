@@ -56,7 +56,7 @@ public class UserValidation {
 
     public static void validateUser (User user) throws UserException {
         if(!validateEmail(user.getEmail())){
-            if(user.getRole() != UserRoles.ADMIN){
+            if(user.getRole() != Role.ADMIN){
                 throw new UserException("Invalid email");
             }
         }
