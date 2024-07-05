@@ -15,15 +15,16 @@ public class UserRepository {
         this.connection = connection;
     }
 
-    public void save(User user) {
-        String sql = "INSERT INTO users (username,email,password,data_create,role) VALUES (?,?,?,?,?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)){
+    public User save(User user) {
+        String sql = "INSERT INTO users (username,email,password,data_create,role_id) VALUES (?,?,?,?,?)";
+
+        try(PreparedStatement pstmt = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)){
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2,user.getEmail());
             pstmt.setString(3,user.getPassword());
             pstmt.setTimestamp(4, Timestamp.valueOf(user.getDataCreate()));
-            pstmt.setString(5, user.getRole().name());
-            boolean rowAffected = pstmt.executeUpdate() > 0;
+            pstmt.setInt(5, user.getRole().getRoleID());
+            boolean rowAffected = pstmt.executeUpdate() == 1;
 
             if(rowAffected){
                 log.info("----------------------------User inserted successfully----------------------------");
