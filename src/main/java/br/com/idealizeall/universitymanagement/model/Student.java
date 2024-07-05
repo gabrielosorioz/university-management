@@ -1,7 +1,6 @@
 package br.com.idealizeall.universitymanagement.model;
 
 import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class Student {
@@ -20,8 +19,7 @@ public class Student {
     private LocalDateTime dataUpdate;
     private String status;
     private String statusPayment;
-
-
+    private User user;
 
     public Student(StudentBuilder studentBuilder) {
         this.id = studentBuilder.id;
@@ -39,6 +37,7 @@ public class Student {
         this.dataUpdate = studentBuilder.dataUpdate;
         this.status = studentBuilder.status;
         this.statusPayment = studentBuilder.statusPayment;
+        this.user = studentBuilder.user;
     }
 
     public static StudentBuilder builder(){
@@ -65,6 +64,7 @@ public class Student {
         private LocalDateTime dataUpdate;
         private String status;
         private String statusPayment;
+        private User user;
 
         protected StudentBuilder(){
 
@@ -131,10 +131,21 @@ public class Student {
             this.statusPayment = status;
             return this;
         }
+        public StudentBuilder user (User user){
+            this.user = user;
+            return this;
+        }
 
         public Student build (){
+            if(user == null){
+                throw new IllegalArgumentException("ERROR: User is null.");
+            }
             return new Student(this);
         }
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Integer getId() {
