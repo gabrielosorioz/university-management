@@ -1,26 +1,29 @@
-package br.com.idealizeall.universitymanagement.controller;
+    package br.com.idealizeall.universitymanagement.controller;
 
-import br.com.idealizeall.universitymanagement.exception.UserException;
-import br.com.idealizeall.universitymanagement.model.Status;
-import br.com.idealizeall.universitymanagement.model.Student;
-import br.com.idealizeall.universitymanagement.model.User;
-import br.com.idealizeall.universitymanagement.model.UserRoles;
-import br.com.idealizeall.universitymanagement.service.StudentService;
-import br.com.idealizeall.universitymanagement.service.UserService;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import org.w3c.dom.Text;
+    import br.com.idealizeall.universitymanagement.exception.UserException;
+    import br.com.idealizeall.universitymanagement.model.*;
+    import br.com.idealizeall.universitymanagement.service.StudentService;
+    import br.com.idealizeall.universitymanagement.service.TeacherService;
+    import br.com.idealizeall.universitymanagement.service.UserService;
+    import javafx.collections.FXCollections;
+    import javafx.collections.ObservableList;
+    import javafx.event.ActionEvent;
+    import javafx.event.EventHandler;
+    import javafx.fxml.FXML;
+    import javafx.fxml.Initializable;
+    import javafx.scene.control.*;
+    import javafx.scene.input.KeyCode;
+    import javafx.scene.input.KeyEvent;
+    import javafx.scene.layout.AnchorPane;
+    import org.w3c.dom.Text;
 
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.*;
+    import java.net.URL;
+    import java.sql.Timestamp;
+    import java.time.Instant;
+    import java.time.LocalDateTime;
+    import java.util.*;
 
-public class LoginViewController implements Initializable {
+    public class LoginViewController implements Initializable {
 
     @FXML
     private AnchorPane adminForm,loginForm,studentForm,teacherForm;
@@ -34,7 +37,7 @@ public class LoginViewController implements Initializable {
     private PasswordField loginPassword;
 
     @FXML
-    private ComboBox<UserRoles> loginRole;
+    private ComboBox<FormType> loginRole;
     @FXML
     private TextField loginUsername;
     @FXML
@@ -57,60 +60,107 @@ public class LoginViewController implements Initializable {
     private TextField currentUsername, currentPassword, currentConfirmPassword, currentEmail;
 
     private List<Label> currentPassLabels;
-    private List<UserRoles> rolesList;
+    private List<FormType> formTypeList;
+    private Role currentRole;
     private ObservableList observableList;
     private UserService userService;
     private StudentService studentService;
+    private TeacherService teacherService;
 
     enum FormType {
-        LOGIN, ADMIN, STUDENT, TEACHER,
+        LOGIN, ADMIN, STUDENT, TEACHER
     }
 
-    public LoginViewController(UserService userService, StudentService studentService){
+    public LoginViewController(UserService userService, StudentService studentService,TeacherService teacherService){
         this.userService = userService;
         this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
-    void loadCurrentFields(FormType formType){
-        switch (formType) {
-            case ADMIN -> {
-                currentUsername = adminUsername;
-                currentPassword = adminPassword;
-                currentConfirmPassword = adminConfirmPassword;
-                currentEmail = null;
-                currentPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
-            }
-            case STUDENT -> {
-                currentUsername = studentUsername;
-                currentPassword = studentPassword;
-                currentConfirmPassword = studentConfirmPassword;
-                currentEmail = studentEmail;
-                currentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
-            }
-            case TEACHER -> {
-                currentUsername = teacherUsername;
-                currentPassword = teacherPassword;
-                currentConfirmPassword = teacherConfirmPassword;
-                currentEmail = teacherEmail;
-                currentPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
-            }
+
+    private void loadCurrentFields(FormType formType){
+        if (formType == FormType.ADMIN){
+            loadAdminFields();
+        }
+        if(formType == FormType.STUDENT){
+            loadStudentFields();
+        }
+        if(formType == FormType.TEACHER){
+            loadTeacherFields();
         }
     }
 
-    void loadRoles(){
-        if(getSelectedRole() == null){
-            setFormVisibility(false,false,false,false);
-            rolesList = Arrays.asList(UserRoles.values());
-            observableList = FXCollections.observableArrayList(rolesList);
+    private void addTabTraversal(TextField... textFields){
+        for(int i =0; i < textFields.length; i++){
+            int nextIndex = (i +1) % textFields.length;
+
+            final int currentIndex = i;
+            final int nextFieldIndex = nextIndex;
+
+            textFields[currentIndex].addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                if(keyEvent.getCode() == KeyCode.TAB){
+                    keyEvent.consume();
+
+                    // focus on next field
+                    textFields[nextFieldIndex].requestFocus();
+                }
+            });
+
+        }
+    }
+
+
+    private void loadTeacherFields() {
+        currentUsername = teacherUsername;
+        currentPassword = teacherPassword;
+        currentConfirmPassword = teacherConfirmPassword;
+        currentEmail = teacherEmail;
+        currentPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
+        currentRole = Role.TEACHER;
+        teacherEmail.requestFocus();
+        eventFilterEnterKey(teacherUsername,teacherPassword,teacherEmail,teacherConfirmPassword);
+        addTabTraversal(teacherEmail,teacherUsername,teacherPassword,teacherConfirmPassword);
+
+    }
+
+    private void loadStudentFields () {
+        currentUsername = studentUsername;
+        currentPassword = studentPassword;
+        currentConfirmPassword = studentConfirmPassword;
+        currentEmail = studentEmail;
+        currentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
+        currentRole = Role.STUDENT;
+        studentEmail.requestFocus();
+        eventFilterEnterKey(studentUsername,studentPassword,studentConfirmPassword,studentEmail);
+        addTabTraversal(studentEmail,studentUsername,studentPassword,studentConfirmPassword);
+    }
+
+    private void loadAdminFields (){
+        currentUsername = adminUsername;
+        currentPassword = adminPassword;
+        currentConfirmPassword = adminConfirmPassword;
+        currentEmail = null;
+        currentPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
+        currentRole = Role.ADMIN;
+        adminUsername.requestFocus();
+        eventFilterEnterKey(adminUsername,adminPassword,adminConfirmPassword);
+    }
+
+    private void loadFormList(){
+            formTypeList  = Arrays.asList(FormType.values());
+            observableList = FXCollections.observableArrayList(formTypeList);
             loginRole.setPromptText("Choose role: ");
             loginRole.setItems(observableList);
-        }
     }
-    void showForm(FormType formType){
-        loadRoles();
+
+
+    private void showForm(FormType formType){
         switch (formType){
             case LOGIN -> {
+                loginRole.getSelectionModel().select(FormType.LOGIN);
                 setFormVisibility(true, false,false,false);
+                currentRole = null;
+
             }
             case ADMIN -> {
                 setFormVisibility(false,true,false,false);
@@ -131,7 +181,7 @@ public class LoginViewController implements Initializable {
         }
     }
 
-    void setFormVisibility(boolean login, boolean admin, boolean student, boolean teacher){
+    private void setFormVisibility(boolean login, boolean admin, boolean student, boolean teacher){
         loginForm.setVisible(login);
         adminForm.setVisible(admin);
         studentForm.setVisible(student);
@@ -145,16 +195,29 @@ public class LoginViewController implements Initializable {
 
     public void switchForm(ActionEvent actionEvent){
         resetFields();
-        loadRoles();
-        UserRoles selectedItem = getSelectedRole();
-         switch(selectedItem){
-             case ADMIN -> {showForm(FormType.ADMIN);}
-             case STUDENT -> {showForm(FormType.STUDENT);}
-             case TEACHER -> {showForm(FormType.TEACHER);}
-         }
+        FormType selectedForm = loginRole.getSelectionModel().getSelectedItem();
+        if (selectedForm != null){
+            switch(selectedForm){
+                case ADMIN -> {showForm(FormType.ADMIN);}
+                case STUDENT -> {showForm(FormType.STUDENT);}
+                case TEACHER -> {showForm(FormType.TEACHER);}
+            }
+        }
     }
 
+    private void eventFilterEnterKey(TextField... textFields){
+            Arrays.stream(textFields).forEach(textField -> {
+                textField.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                    if(keyEvent.getCode() == KeyCode.ENTER){
+                        signUp();
+                        keyEvent.consume();
+                    }
+                });
+            });
+        }
+
     public void signIn(){
+        loadFormList();
         showForm(FormType.LOGIN);
     }
 
@@ -166,7 +229,8 @@ public class LoginViewController implements Initializable {
         alert.showAndWait();
     }
 
-    public void signUp(ActionEvent actionEvent){
+    public void signUp(){
+
         if(currentUsername == null || currentPassword == null || currentConfirmPassword == null){
             showAlert("Error", "Form not loaded", "Please select a valid form to sign up", Alert.AlertType.ERROR);
             return;
@@ -193,10 +257,10 @@ public class LoginViewController implements Initializable {
         }
 
         try {
-            User user = createUser(currentUsername, currentPassword,currentEmail);
+            User user = createUser(currentUsername, currentPassword,currentEmail,currentRole);
             if(user != null){
-                userService.registerUser(user);
-                registerUserByRole(user.getRole());
+                User savedUser = userService.registerUser(user);
+                registerUserByRole(savedUser);
                 showAlert("Congratulations","Successfully registered", "Now you can log in with your user and password",Alert.AlertType.INFORMATION);
                 resetFields();
                 showForm(FormType.LOGIN);
@@ -212,7 +276,8 @@ public class LoginViewController implements Initializable {
         if (currentPassword != null) currentPassword.clear();
         if (currentConfirmPassword != null) currentConfirmPassword.clear();
         if (currentEmail != null) currentEmail.clear();
-        loginRole.setPromptText("Choose role: ");
+        if (currentRole != null) currentRole = null;
+
     }
 
     private void showErrorFieldUI(TextField field){
@@ -294,9 +359,6 @@ public class LoginViewController implements Initializable {
 
     }
 
-    private UserRoles getSelectedRole(){
-        return loginRole.getSelectionModel().getSelectedItem();
-    }
 
     private boolean fieldsAreNotBlank(String... fields) {
         return !Arrays.stream(fields)
@@ -304,30 +366,54 @@ public class LoginViewController implements Initializable {
                 .allMatch(field -> field.isBlank());
     }
 
-    private User createUser(TextField username, TextField password, TextField email){
+    private User createUser(TextField username, TextField password, TextField email, Role role){
         String usrname = username.getText();
         String pass = password.getText();
         String em = (email != null) ? email.getText() : null;
-        UserRoles selectedRole = getSelectedRole();
-        if (selectedRole != null) {
-            return userService.createUserByRole(selectedRole, usrname, pass, em);
+
+        if (role != null) {
+            return userService.createUserByRole(role, usrname, pass, em);
+        } else {
+            throw new IllegalArgumentException("ERROR: User role is null" + role.name());
         }
-        return null;
+
     }
 
-    private void registerUserByRole(UserRoles userRole){
-        switch (userRole) {
-            case STUDENT -> registerStudent();
+    private void registerUserByRole(User user){
+        System.out.println(user.getId());
+        Role role = user.getRole();
+        Role admin = Role.ADMIN;
+        Role student = Role.STUDENT;
+        Role teacher = Role.TEACHER;
+
+        if(role == student){
+            registerStudent(user);
         }
+
+        if(role == teacher){
+            registerTeacher(user);
+        }
+
     }
 
-    private void registerStudent(){
+    private void registerStudent(User user){
         Student student = Student.builder()
                 .status(Status.APPROVAL.name())
                 .dataInsert(LocalDateTime.now())
+                .user(user)
                 .build();
         studentService.registerStudent(student);
 
     }
 
-}
+    private void registerTeacher(User user){
+        Teacher teacher = Teacher.builder()
+                .status(Status.APPROVAL.name())
+                .dateInsert(Timestamp.from(Instant.now()))
+                .user(user)
+                .build();
+        teacherService.registerTeacher(teacher);
+
+    }
+
+    }
