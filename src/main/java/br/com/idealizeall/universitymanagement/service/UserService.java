@@ -1,8 +1,8 @@
 package br.com.idealizeall.universitymanagement.service;
 
 import br.com.idealizeall.universitymanagement.exception.UserException;
+import br.com.idealizeall.universitymanagement.model.Role;
 import br.com.idealizeall.universitymanagement.model.User;
-import br.com.idealizeall.universitymanagement.model.UserRoles;
 import br.com.idealizeall.universitymanagement.model.UserValidation;
 import br.com.idealizeall.universitymanagement.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -26,11 +26,11 @@ public class UserService {
                 .build();
     }
 
-    public void registerUser(User user) throws UserException {
+    public User registerUser(User user) throws UserException {
         if(userRepository.existsByUsername(user.getUsername())){
             throw new UserException("Username already exists");
         }
         UserValidation.validateUser(user);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 }

@@ -1,5 +1,5 @@
 package br.com.idealizeall.universitymanagement.repository;
-import br.com.idealizeall.universitymanagement.config.DBConfig;
+import br.com.idealizeall.universitymanagement.model.Role;
 import br.com.idealizeall.universitymanagement.model.User;
 
 import java.sql.*;
@@ -29,12 +29,27 @@ public class UserRepository {
             if(rowAffected){
                 log.info("----------------------------User inserted successfully----------------------------");
             } else {
-                log.severe("----------------------------Couldn't insert user----------------------------");
+                throw new SQLException("ERROR: Creating user failed, no row affected. ");
+            }
+
+            try(ResultSet generatedKeys = pstmt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    return User.builder()
+                            .id(generatedKeys.getInt("id"))
+                            .username(generatedKeys.getString("username"))
+                            .email(generatedKeys.getString("email"))
+                            .role(Role.getRoleById(generatedKeys.getInt("role_id")))
+                            .dataCreate(generatedKeys.getTimestamp("data_create").toLocalDateTime())
+                            .build();
+                } else {
+                    throw new SQLException("ERROR: Creating user failed, no ID obtained. ");
+                }
             }
 
         } catch (SQLException ex) {
-            log.severe("Error at insert user " + ex.getLocalizedMessage() + "SQL State: " + ex.getSQLState());
+            log.severe("Error at insert user: " + ex.getMessage() + "SQL State: " + ex.getSQLState());
         }
+        return null;
     }
 
     public boolean existsByUsername(String username){
