@@ -5,6 +5,7 @@
     import br.com.idealizeall.universitymanagement.service.StudentService;
     import br.com.idealizeall.universitymanagement.service.TeacherService;
     import br.com.idealizeall.universitymanagement.service.UserService;
+    import com.dlsc.formsfx.model.structure.Form;
     import javafx.collections.FXCollections;
     import javafx.collections.ObservableList;
     import javafx.event.ActionEvent;
@@ -18,7 +19,9 @@
     import org.w3c.dom.Text;
 
     import java.net.URL;
+    import java.sql.Array;
     import java.sql.Timestamp;
+    import java.text.Normalizer;
     import java.time.Instant;
     import java.time.LocalDateTime;
     import java.util.*;
@@ -77,73 +80,9 @@
         this.teacherService = teacherService;
     }
 
-
-    private void loadCurrentFields(FormType formType){
-        if (formType == FormType.ADMIN){
-            loadAdminFields();
-        }
-        if(formType == FormType.STUDENT){
-            loadStudentFields();
-        }
-        if(formType == FormType.TEACHER){
-            loadTeacherFields();
-        }
-    }
-
-    private void addTabTraversal(TextField... textFields){
-        for(int i =0; i < textFields.length; i++){
-            int nextIndex = (i +1) % textFields.length;
-
-            final int currentIndex = i;
-            final int nextFieldIndex = nextIndex;
-
-            textFields[currentIndex].addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-                if(keyEvent.getCode() == KeyCode.TAB){
-                    keyEvent.consume();
-
-                    // focus on next field
-                    textFields[nextFieldIndex].requestFocus();
-                }
-            });
-
-        }
-    }
-
-
-    private void loadTeacherFields() {
-        currentUsername = teacherUsername;
-        currentPassword = teacherPassword;
-        currentConfirmPassword = teacherConfirmPassword;
-        currentEmail = teacherEmail;
-        currentPassLabels = Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
-        currentRole = Role.TEACHER;
-        teacherEmail.requestFocus();
-        eventFilterEnterKey(teacherUsername,teacherPassword,teacherEmail,teacherConfirmPassword);
-        addTabTraversal(teacherEmail,teacherUsername,teacherPassword,teacherConfirmPassword);
-
-    }
-
-    private void loadStudentFields () {
-        currentUsername = studentUsername;
-        currentPassword = studentPassword;
-        currentConfirmPassword = studentConfirmPassword;
-        currentEmail = studentEmail;
-        currentPassLabels = Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
-        currentRole = Role.STUDENT;
-        studentEmail.requestFocus();
-        eventFilterEnterKey(studentUsername,studentPassword,studentConfirmPassword,studentEmail);
-        addTabTraversal(studentEmail,studentUsername,studentPassword,studentConfirmPassword);
-    }
-
-    private void loadAdminFields (){
-        currentUsername = adminUsername;
-        currentPassword = adminPassword;
-        currentConfirmPassword = adminConfirmPassword;
-        currentEmail = null;
-        currentPassLabels = Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
-        currentRole = Role.ADMIN;
-        adminUsername.requestFocus();
-        eventFilterEnterKey(adminUsername,adminPassword,adminConfirmPassword);
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        showLogin();
     }
 
     private void loadFormList(){
@@ -151,82 +90,140 @@
             observableList = FXCollections.observableArrayList(formTypeList);
             loginRole.setPromptText("Choose role: ");
             loginRole.setItems(observableList);
-    }
-
-
-    private void showForm(FormType formType){
-        switch (formType){
-            case LOGIN -> {
-                loginRole.getSelectionModel().select(FormType.LOGIN);
-                setFormVisibility(true, false,false,false);
-                currentRole = null;
-
-            }
-            case ADMIN -> {
-                setFormVisibility(false,true,false,false);
-                loadCurrentFields(FormType.ADMIN);
-                addPasswordListener(currentPassword);
-            }
-            case STUDENT -> {
-                setFormVisibility(false, false, true, false);
-                loadCurrentFields(FormType.STUDENT);
-                addPasswordListener(currentPassword);
-
-            }
-            case TEACHER -> {
-                setFormVisibility(false,false,false,true);
-                loadCurrentFields(FormType.TEACHER);
-                addPasswordListener(currentPassword);
-            }
         }
-    }
-
-    private void setFormVisibility(boolean login, boolean admin, boolean student, boolean teacher){
-        loginForm.setVisible(login);
-        adminForm.setVisible(admin);
-        studentForm.setVisible(student);
-        teacherForm.setVisible(teacher);
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        signIn();
-    }
 
     public void switchForm(ActionEvent actionEvent){
-        resetFields();
-        FormType selectedForm = loginRole.getSelectionModel().getSelectedItem();
-        if (selectedForm != null){
-            switch(selectedForm){
-                case ADMIN -> {showForm(FormType.ADMIN);}
-                case STUDENT -> {showForm(FormType.STUDENT);}
-                case TEACHER -> {showForm(FormType.TEACHER);}
+            resetFields();
+            FormType selectedForm = loginRole.getSelectionModel().getSelectedItem();
+            if (selectedForm != null){
+                switch(selectedForm){
+                    case LOGIN -> {setForm(FormType.LOGIN);}
+                    case ADMIN -> {setForm(FormType.ADMIN);}
+                    case STUDENT -> {setForm(FormType.STUDENT);}
+                    case TEACHER -> {setForm(FormType.TEACHER);}
+                }
             }
+        }
+
+    private void loadCurrentFields(TextField email, TextField username, TextField password, TextField confirmPassword,Role role,FormType form){
+        currentUsername = username;
+        currentPassword = password;
+        currentConfirmPassword = confirmPassword;
+        currentEmail = email;
+        currentPassLabels = getPassLabels(form);
+        currentRole = role;
+
+
+        eventFilterEnterKey(email,username,password,confirmPassword);
+        addTabTraversal(email,username,password,confirmPassword);
+        addPasswordListener(password);
+    }
+
+    private void addTabTraversal(TextField... textFields){
+        List<TextField> nonNullTxtFields = Arrays.stream(textFields)
+                .filter(Objects::nonNull)
+                .toList();
+
+        for(int i =0; i < nonNullTxtFields.size(); i++){
+            int nextIndex = (i +1) % nonNullTxtFields.size();
+
+            final int currentIndex = i;
+            final int nextFieldIndex = nextIndex;
+
+            nonNullTxtFields.get(currentIndex).addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                if(keyEvent.getCode() == KeyCode.TAB){
+                    keyEvent.consume();
+
+                    // focus on next field
+                    nonNullTxtFields.get(nextIndex).requestFocus();
+                }
+            });
+
         }
     }
 
     private void eventFilterEnterKey(TextField... textFields){
-            Arrays.stream(textFields).forEach(textField -> {
-                textField.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
-                    if(keyEvent.getCode() == KeyCode.ENTER){
-                        signUp();
-                        keyEvent.consume();
-                    }
-                });
-            });
+        Arrays.stream(textFields)
+                .filter(Objects::nonNull)
+                .forEach(textField -> {
+                            textField.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+                                if(keyEvent.getCode().equals(KeyCode.ENTER)){
+                                    signUp();
+                                    keyEvent.consume();
+                                }
+
+                            });
+                        }
+                );
+    }
+
+    private void setFormVisibility(boolean login, boolean admin, boolean student, boolean teacher){
+            loginForm.setVisible(login);
+            adminForm.setVisible(admin);
+            studentForm.setVisible(student);
+            teacherForm.setVisible(teacher);
         }
 
-    public void signIn(){
-        loadFormList();
-        showForm(FormType.LOGIN);
+    private void showForm(FormType form){
+
+        if(form.equals(FormType.LOGIN)){
+            setFormVisibility(true, false,false,false);
+        }
+        if(form.equals(FormType.STUDENT)){
+            setFormVisibility(false, false,true,false);
+            currentEmail.requestFocus();
+        }
+        if(form.equals(FormType.TEACHER)){
+            setFormVisibility(false, false,false,true);
+            currentEmail.requestFocus();
+        }
+        if(form.equals(FormType.ADMIN)){
+            setFormVisibility(false, true,false,false);
+            currentUsername.requestFocus();
+        }
+    }
+
+    private void setForm(FormType form){
+
+        if(form.equals(FormType.LOGIN)){
+            loginRole.getSelectionModel().select(form);
+        }
+        if(form.equals(FormType.STUDENT)){
+            loadCurrentFields(studentEmail,studentUsername,studentPassword,studentConfirmPassword,Role.STUDENT,form);
+        }
+        if(form.equals(FormType.TEACHER)){
+            loadCurrentFields(teacherEmail,teacherUsername,teacherPassword,teacherConfirmPassword,Role.TEACHER,form);
+        }
+        if(form.equals(FormType.ADMIN)){
+            loadCurrentFields(null,adminUsername,adminPassword,adminConfirmPassword,Role.ADMIN,form);
+        }
+        showForm(form);
+    }
+
+    private List<Label> getPassLabels(FormType form){
+        if(form.equals(FormType.STUDENT)){
+            return Arrays.asList(studentPassHasNum, studentPass8Char, studentPassHasCap, studentPassHasLow);
+        }
+        if(form.equals(FormType.TEACHER)){
+            return Arrays.asList(teacherPassHasNum, teacherPass8Char, teacherPassHasCap, teacherPassHasLow);
+        }
+        if(form.equals(FormType.ADMIN)){
+            return  Arrays.asList(admPassHasNum, admPass8Char, admPassHasCap, admPassHasLow);
+        }
+        throw new IllegalArgumentException("Invalid form type: " + form.name());
     }
 
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(header);
+            alert.setContentText(content);
+            alert.showAndWait();
+        }
+
+    public void showLogin(){
+        loadFormList();
+        setForm(FormType.LOGIN);
     }
 
     public void signUp(){
@@ -236,13 +233,13 @@
             return;
         }
 
-        String usernameTxt = currentUsername.getText();
-        String passwordTxt = currentPassword.getText();
-        String confirmPasswordTxt = currentConfirmPassword.getText();
-        String emailTxt = (currentEmail != null) ? currentEmail.getText() : null;
+        String usernameStr = currentUsername.getText();
+        String passwordStr = currentPassword.getText();
+        String confirmPasswordStr = currentConfirmPassword.getText();
+        String emailStr = (currentEmail != null) ? currentEmail.getText() : null;
 
-        boolean notBlank = fieldsAreNotBlank(usernameTxt, passwordTxt, confirmPasswordTxt,emailTxt);
-        boolean equalPasswords = passwordTxt.equals(confirmPasswordTxt);
+        boolean notBlank = fieldsAreNotBlank(usernameStr, passwordStr, confirmPasswordStr,emailStr);
+        boolean equalPasswords = passwordStr.equals(confirmPasswordStr);
 
         if(!notBlank){
             highLightEmptyFields();
@@ -263,7 +260,7 @@
                 registerUserByRole(savedUser);
                 showAlert("Congratulations","Successfully registered", "Now you can log in with your user and password",Alert.AlertType.INFORMATION);
                 resetFields();
-                showForm(FormType.LOGIN);
+                showLogin();
             }
         } catch (UserException e){
             handleUserException(e);
@@ -359,7 +356,6 @@
 
     }
 
-
     private boolean fieldsAreNotBlank(String... fields) {
         return !Arrays.stream(fields)
                 .filter(Objects::nonNull)
@@ -416,4 +412,4 @@
 
     }
 
-    }
+}
